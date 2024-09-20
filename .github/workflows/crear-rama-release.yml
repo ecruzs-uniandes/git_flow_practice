@@ -12,16 +12,26 @@ jobs:
       uses: actions/checkout@v3
     - name: imprimir mensaje
       run: echo " Se activo porque llego palabra release"
-    - name: Fetch all branches
-      run: git fetch --all
-    - name: Crear rama release
+
+
+    - name: Create release branch
       run: |
-        git checkout -b release/prueba1
-    - name: Merge develop en release
-      if: ${{ success() }}
+        git config --global user.name 'github-actions'
+        git config --global user.email 'github-actions@github.com'
+        RELEASE_BRANCH="release-$(date +'%Y%m%d%H%M%S')"
+        git checkout -b $RELEASE_BRANCH
+        git push origin $RELEASE_BRANCH
+    - name: Checkout code
+      uses: actions/checkout@v2
+      with:
+        ref: ${{ needs.create-release-branch.outputs.RELEASE_BRANCH }}
+    - name: Merge develop into release
       run: |
+        git config --global user.name 'github-actions'
+        git config --global user.email 'github-actions@github.com'
+        git checkout ${{ needs.create-release-branch.outputs.RELEASE_BRANCH }}
         git merge origin/develop
-        git push release/prueba1
+        git push origin ${{ needs.create-release-branch.outputs.RELEASE_BRANCH }}
 
       
 
