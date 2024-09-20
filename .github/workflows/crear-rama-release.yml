@@ -16,9 +16,10 @@ jobs:
       run: |
         git checkout -b release/prueba1
     - name: Merge develop en release
+      if: ${{ success() }}
       run: |
-        git checkout release/prueba1
-        git merge develop
+        git merge origin/develop
+        git push release/prueba1
 
       
 
