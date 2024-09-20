@@ -1,0 +1,18 @@
+name: crear-rama-release
+on:
+  push:
+    branches: [ '*' ]
+jobs:
+  job1:
+    name: Validar integracion
+    runs-on: ubuntu-latest
+    if: contains(github.event.head_commit.message, 'release')
+    steps:
+    -name: Checkout de repositorio
+      uses: actions/checkout@v3
+    -name: imprimir mensaje
+      run: echo " Se activo porque llego palabra release"
+
+
+
+    
