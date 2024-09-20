@@ -26,7 +26,7 @@ jobs:
         git config --global user.name 'github-actions'
         git config --global user.email 'github-actions@github.com'
         git checkout release-prueba2
-        git pull origin develop --no-commit --no-ff
+        git pull origin desarrollo --no-commit --no-ff
         git merge --no-ff --no-commit origin/develop || true
         git commit -m "Merge develop into feature-prueba2"
         git push origin feture-prueba2
