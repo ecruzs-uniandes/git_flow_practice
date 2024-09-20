@@ -18,16 +18,18 @@ jobs:
       run: |
         git config --global user.name 'github-actions'
         git config --global user.email 'github-actions@github.com'
-        RELEASE_BRANCH="release-prueba1"
+        RELEASE_BRANCH="release-prueba2"
         git checkout -b $RELEASE_BRANCH
         git push origin $RELEASE_BRANCH
     - name: Merge develop into release
       run: |
         git config --global user.name 'github-actions'
         git config --global user.email 'github-actions@github.com'
-        git checkout release-prueba1
-        git merge origin/develop
-        git push origin release/prueba1
+        git checkout release-prueba2
+        git pull origin develop --no-commit --no-ff
+        git merge --no-ff --no-commit origin/develop || true
+        git commit -m "Merge develop into feature-prueba2"
+        git push origin feture-prueba2
 
       
 
