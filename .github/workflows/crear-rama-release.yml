@@ -29,7 +29,7 @@ jobs:
     steps:
     - name: Checkout de repositorio
       uses: actions/checkout@v2
-      
+
     - name: Crear rama release
       id: crear_release
       run: |
@@ -47,7 +47,7 @@ jobs:
         git config --global user.email 'github-actions@github.com'
         git checkout $RELEASE_BRANCH
         git pull origin desarrollo --no-commit --no-ff --allow-unrelated-histories
-        git merge --no-ff --no-commit origin/desarrollo || true
+        git merge --no-ff --no-commit origin/desarrollo
         git commit -m "Merge develop into $RELEASE_BRANCH"
         git push origin $RELEASE_BRANCH
       
