@@ -3,34 +3,34 @@ on:
   push:
     branches: [ '*' ]
 jobs:
-  check-commit-message:
+  validar-palabra-commit:
     runs-on: ubuntu-latest
     outputs:
-      palabra: ${{ steps.check_message.outputs.keyword_found }}
+      palabra: ${{ steps.buscar_palabra.outputs.palabra }}
     steps:
-    - name: Checkout code
+    - name: Checkout repositorio
       uses: actions/checkout@v2
 
-    - name: Check commit message for keyword
-      id: check_message
+    - name: buscar palabra en mensaje
+      id: buscar_palabra
       run: |
         if [[ "${{ contains(github.event.head_commit.message, 'release') }}" == "true" ]]; then
-          echo "Keyword found"
-          echo "::set-output name=keyword_found::true"
+          echo "Palabra encontrada"
+          echo "::set-output name=palabra::true"
         else
-          echo "Keyword not found"
-          echo "::set-output name=keyword_found::false"
+          echo "Palabra no encontrada"
+          echo "::set-output name=palabra::false"
         fi
 
-  next-job:
-    needs: check-commit-message
+  crear-rama-release:
+    needs: validar-palabra-commit
     runs-on: ubuntu-latest
     steps:
     - name: Imprimir
       id: imprimir
-      run: echo ${{needs.check-commit-message.outputs.palabra}}
+      run: echo ${{needs.validar-palabra-commit.outputs.palabra}}
     - name: Print OK
-      if: needs.check-commit-message.outputs.palabra == 'true'
+      if: needs.validar-palabra-commit.outputs.palabra == 'true'
       run: echo "ok"
       
 
