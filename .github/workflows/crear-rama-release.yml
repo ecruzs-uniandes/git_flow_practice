@@ -25,6 +25,7 @@ jobs:
   crear-rama-release:
     needs: validar-palabra-commit
     runs-on: ubuntu-latest
+    if: needs.validar-palabra-commit.outputs.palabra == 'true' 
     steps:
     - name: Imprimir
       id: imprimir
