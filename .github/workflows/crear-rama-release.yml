@@ -13,18 +13,18 @@ jobs:
     - name: Validar palabra clave
       id: check_message
       run: |
-        if [[ "${{ contains(github.event.head_commit.message, 'release') }}" == "true" ]]; then
-          echo "Keyword found"
+        if contains(github.event.head_commit.message, 'release'); then
+          echo "La palabra clave 'release' se encontró en el commit"
           echo "::set-output name=keyword_found::true"
         else
           echo "Keyword not found"
           echo "::set-output name=keyword_found::false"
+          exit 1
         fi
-
-
 
   next-job:
     needs: validar-palabra-clave
+    name: job 2
     runs-on: ubuntu-latest
     if: needs.validar-palabra-clave.outputs.keyword_found == 'true'
     steps:
