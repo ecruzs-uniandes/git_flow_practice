@@ -27,6 +27,9 @@ jobs:
     runs-on: ubuntu-latest
     if: needs.validar-palabra-commit.outputs.palabra == 'true' 
     steps:
+    - name: Checkout de repositorio
+      uses: actions/checkout@v2
+      
     - name: Crear rama release
       id: crear_release
       run: |
