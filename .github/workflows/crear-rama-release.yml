@@ -3,34 +3,33 @@ on:
   push:
     branches: [ '*' ]
 jobs:
-  job1:
-    name: Validar integracion
+  validar-palabra-clave:
+    name: Validar palabra clave
     runs-on: ubuntu-latest
     if: contains(github.event.head_commit.message, 'release')
     steps:
-    - name: Checkout de repositorio
-      uses: actions/checkout@v3
-    - name: imprimir mensaje
-      run: echo " Se activo porque llego palabra release"
+    - name: Checkout repositorio
+      uses: actions/checkout@v2
+    - name: Validar palabra clave
+        id: check_message
+        run: |
+          if [[ "${{ contains(github.event.head_commit.message, 'release') }}" == "true" ]]; then
+            echo "Keyword found"
+            echo "::set-output name=keyword_found::true"
+          else
+            echo "Keyword not found"
+            echo "::set-output name=keyword_found::false"
+          fi
 
 
-    - name: Create release branch
-      run: |
-        git config --global user.name 'github-actions'
-        git config --global user.email 'github-actions@github.com'
-        RELEASE_BRANCH="release-prueba4"
-        git checkout -b $RELEASE_BRANCH
-        git push origin $RELEASE_BRANCH
-    - name: Merge develop into release
-      run: |
-        git config --global user.name 'github-actions'
-        git config --global user.email 'github-actions@github.com'
-        git checkout release-prueba4
-        git pull origin desarrollo --no-commit --no-ff --allow-unrelated-histories
-        git merge --no-ff --no-commit origin/develop || true
-        git commit -m "Merge develop into release-prueba2"
-        git push origin release-prueba4
 
+  next-job:
+    needs: validar-palabra-clave
+    runs-on: ubuntu-latest
+    if: needs.validar-palabra-clave.outputs.keyword_found == 'true'
+    steps:
+      - name: Print OK
+        run: echo "ok"
       
 
 
