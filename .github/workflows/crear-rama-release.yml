@@ -14,18 +14,21 @@ jobs:
       run: |
         if [[ "${{ contains(github.event.head_commit.message, 'release') }}" == "true" ]]; then
           echo "Keyword found"
-          echo "keyword_found=true" >> $GITHUB_ENV
+          echo "::set-output name=keyword_found::true"
         else
           echo "Keyword not found"
-          echo "keyword_found=false" >> $GITHUB_ENV
+          echo "::set-output name=keyword_found::false"
         fi
 
   next-job:
     needs: check-commit-message
     runs-on: ubuntu-latest
-    if: env.keyword_found == 'true'
     steps:
+    - name: Imprimir
+      id: imprimir
+      run: echo ${{needs.Mi-primer-job.outputs.salida}}
     - name: Print OK
+      if: needs.check-commit-message.outputs.keyword_found == 'true'
       run: echo "ok"
       
 
