@@ -50,8 +50,5 @@ jobs:
         git merge --no-ff --no-commit origin/desarrollo
         git commit -m "Merge develop into $RELEASE_BRANCH"
         git push origin $RELEASE_BRANCH
+
       
-
-
-
-    
