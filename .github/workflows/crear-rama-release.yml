@@ -5,6 +5,8 @@ on:
 jobs:
   check-commit-message:
     runs-on: ubuntu-latest
+    outputs:
+      palabra-found: ${{ steps.check_message.outputs.keyword_found }}
     steps:
     - name: Checkout code
       uses: actions/checkout@v2
@@ -26,7 +28,7 @@ jobs:
     steps:
     - name: Imprimir
       id: imprimir
-      run: echo ${{needs.Mi-primer-job.outputs.salida}}
+      run: echo ${{needs.check-commit-message.outputs.keyword_found}}
     - name: Print OK
       if: needs.check-commit-message.outputs.keyword_found == 'true'
       run: echo "ok"
