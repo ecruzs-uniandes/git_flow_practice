@@ -11,15 +11,15 @@ jobs:
     - name: Checkout repositorio
       uses: actions/checkout@v2
     - name: Validar palabra clave
-        id: check_message
-        run: |
-          if [[ "${{ contains(github.event.head_commit.message, 'release') }}" == "true" ]]; then
-            echo "Keyword found"
-            echo "::set-output name=keyword_found::true"
-          else
-            echo "Keyword not found"
-            echo "::set-output name=keyword_found::false"
-          fi
+      id: check_message
+      run: |
+        if [[ "${{ contains(github.event.head_commit.message, 'release') }}" == "true" ]]; then
+          echo "Keyword found"
+          echo "::set-output name=keyword_found::true"
+        else
+          echo "Keyword not found"
+          echo "::set-output name=keyword_found::false"
+        fi
 
 
 
