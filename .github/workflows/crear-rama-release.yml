@@ -3,30 +3,27 @@ on:
   push:
     branches: [ '*' ]
 jobs:
-  validar-palabra-clave:
-    name: Validar palabra clave
+  check-commit-message:
     runs-on: ubuntu-latest
     steps:
-    - name: Checkout repositorio
+    - name: Checkout code
       uses: actions/checkout@v2
 
-    - name: Validar palabra clave
+    - name: Check commit message for keyword
       id: check_message
       run: |
         if [[ "${{ contains(github.event.head_commit.message, 'release') }}" == "true" ]]; then
           echo "Keyword found"
-          echo "::set-output name=keyword_found::true"
+          echo "keyword_found=true" >> $GITHUB_ENV
         else
           echo "Keyword not found"
-          echo "::set-output name=keyword_found::false"
-          exit 1
+          echo "keyword_found=false" >> $GITHUB_ENV
         fi
 
   next-job:
-    needs: validar-palabra-clave
-    name: job 2
+    needs: check-commit-message
     runs-on: ubuntu-latest
-    if: needs.validar-palabra-clave.outputs.keyword_found == 'true'
+    if: env.keyword_found == 'true'
     steps:
     - name: Print OK
       run: echo "ok"
