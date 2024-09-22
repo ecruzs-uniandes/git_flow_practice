@@ -1,0 +1,65 @@
+name: crear-rama-release
+on:
+  push:
+    branches: [ develop ]
+
+jobs:
+  validar-palabra-commit:
+    name: buscar palabra clave
+    runs-on: ubuntu-latest
+    outputs:
+      palabra: ${{ steps.buscar_palabra.outputs.palabra }}
+    steps:
+    - name: Checkout repositorio
+      uses: actions/checkout@v2
+
+    - name: buscar palabra en mensaje
+      id: buscar_palabra
+      run: |
+        if [[ "${{ contains(github.event.head_commit.message, 'release') }}" == "true" ]]; then
+          echo "Palabra encontrada"
+          echo "::set-output name=palabra::true"
+        else
+          echo "Palabra no encontrada"
+          echo "::set-output name=palabra::false"
+        fi
+
+  crear-rama-release:
+    name: crear rama release
+    needs: validar-palabra-commit
+    runs-on: ubuntu-latest
+    if: needs.validar-palabra-commit.outputs.palabra == 'true'
+    steps:
+    - name: Checkout de repositorio
+      uses: actions/checkout@v2
+    - name: Configuración de entorno de python
+      uses: actions/setup-python@v2
+      with:
+        python-version: '3.8'
+    - name: Instalación de librerías y dependencias
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+
+    - name: Crear rama release
+      id: crear_release
+      run: |
+        RELEASE_BRANCH="release/release-$(date +'%Y%m%d%H%M%S')"
+        echo "nueva rama $RELEASE_BRANCH"
+        echo "RELEASE_BRANCH=$RELEASE_BRANCH" >> $GITHUB_ENV
+        git checkout -b $RELEASE_BRANCH
+        git push origin $RELEASE_BRANCH
+
+    - name: Correr pruebas unitarias
+      id: correr-pruebas
+      run: python -m unittest discover -s tests -v
+    - name: Validar resultado con errores
+      if: ${{ failure() }}
+      env:
+        RESULTADO_PRUEBAS: false
+        run: echo "::set-output name=respuesta::${MENSAJE_ERROR}"
+    - name: Validar resultado sin errores
+      if: ${{ success() }}
+      env:
+        RESULTADO_PRUEBAS: true
+        run: echo "::set-output name=respuesta::${MENSAJE_EXITO}"
